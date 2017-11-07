@@ -18,7 +18,9 @@ def get_upgrade_command():
             cmd = os.path.abspath(os.path.join(sys.executable, '..', '..', 'updater.exe'))
             if os.path.exists(cmd):
                 return [cmd, '/reducedgui', '/checknow']
-            else:
+            elif sys.platform == 'darwin':
+                return [echo, 'platform (mac): {}'.format(sys.platform)]
+            else
                 return False
         else:
             return False
