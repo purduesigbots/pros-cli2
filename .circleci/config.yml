@@ -1,0 +1,67 @@
+version: 2
+jobs:
+  build_cli:
+    macos:
+      xcode: "9.0"
+    branches:
+      only: master
+    steps:
+      - install:
+        - run:
+          - name: "Install Python3.6"
+          - command: brew install python3
+        - run:
+          - name: "Install Build Dependencies"
+          - command: pip3 install -r requirements.txt
+      - do_build:
+        - checkout
+        - run:
+          - name: "Build CLI"
+          - command: python3 build.py bdist_mac
+        - store_artifacts:
+          path: build/PROS\ CLI.app
+        - persist_to_workspace:
+          root: /tmp/build
+          paths:
+            - build/PROS\ CLI.app
+            - version
+  build_installer:
+    macos:
+      xcode: "9.0"
+    branches:
+      only: master
+    steps:
+      - attach_workspace:
+        at: /tmp/build
+      - run: |
+        cat << EOF > pkg/scripts/preinstall
+        #!/bin/sh
+        if [ ! -d /usr/local/bin ]; then
+          mkdir -p /usr/local/bin
+        fi
+        # silently uninstall previous version
+        if [ -e /usr/local/bin/pros ]; then
+          rm -rf /Applications/PROS\ CLI.app
+        fi
+        EOF
+      - run: |
+        cat << EOF > pkg/scripts/postinstall
+        #!/bin/sh
+        # link PROS CLI binary to /usr/local/bin
+        [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
+        ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
+        EOF
+      - run: cp -r /tmp/build/PROS\ CLI.app pkg/ROOT/
+      - run:
+        - name: "Build PROS CLI Installer"
+        - command: pkgbuild --root pkg/ROOT/ --scripts pkg/scripts/ --identifier edu.purdue.cs.pros.pros-cli --version `cat /tmp/build/version` --install-location /Applications pros-cli.pkg
+      - store_artifacts:
+        path: pros-cli.pkg
+workflows:
+  version: 2
+  build:
+    - build_cli
+    - build_installer:
+      requires:
+        - build_cli
+        
