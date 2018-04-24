@@ -3,8 +3,6 @@ jobs:
   build_cli:
     macos:
       xcode: "9.0"
-    branches:
-      only: master
     steps:
       - install:
         - run:
@@ -28,8 +26,6 @@ jobs:
   build_installer:
     macos:
       xcode: "9.0"
-    branches:
-      only: master
     steps:
       - attach_workspace:
         at: /tmp/build
@@ -61,8 +57,16 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_cli
+      - build_cli:
+          filters:
+            branches:
+                only:
+                  - master
       - build_installer:
+          filters:
+            branches:
+              only:
+                - master
           requires:
             - build_cli
         
