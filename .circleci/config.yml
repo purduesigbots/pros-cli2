@@ -63,6 +63,6 @@ workflows:
     jobs:
       - build_cli
       - build_installer:
-        requires:
-          - build_cli
+          requires:
+            - build_cli
         
