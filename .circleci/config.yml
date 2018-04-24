@@ -34,23 +34,23 @@ jobs:
       - attach_workspace:
         at: /tmp/build
       - run: |
-        cat << EOF > pkg/scripts/preinstall
-        #!/bin/sh
-        if [ ! -d /usr/local/bin ]; then
-          mkdir -p /usr/local/bin
-        fi
-        # silently uninstall previous version
-        if [ -e /usr/local/bin/pros ]; then
-          rm -rf /Applications/PROS\ CLI.app
-        fi
-        EOF
+          cat << EOF > pkg/scripts/preinstall
+          #!/bin/sh
+          if [ ! -d /usr/local/bin ]; then
+            mkdir -p /usr/local/bin
+          fi
+          # silently uninstall previous version
+          if [ -e /usr/local/bin/pros ]; then
+            rm -rf /Applications/PROS\ CLI.app
+          fi
+          EOF
       - run: |
-        cat << EOF > pkg/scripts/postinstall
-        #!/bin/sh
-        # link PROS CLI binary to /usr/local/bin
-        [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
-        ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
-        EOF
+          cat << EOF > pkg/scripts/postinstall
+          #!/bin/sh
+          # link PROS CLI binary to /usr/local/bin
+          [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
+          ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
+          EOF
       - run: cp -r /tmp/build/PROS\ CLI.app pkg/ROOT/
       - run:
         - name: "Build PROS CLI Installer"
