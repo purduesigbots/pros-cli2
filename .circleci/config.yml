@@ -7,10 +7,10 @@ jobs:
       - run:
           name: "Install Python3.6"
           command: brew upgrade python
+      - checkout
       - run:
           name: "Install Build Dependencies"
           command: pip3 install -r requirements.txt
-      - checkout
       - run:
           name: "Build CLI"
           command: python3 build.py bdist_mac
