@@ -6,13 +6,20 @@ jobs:
     steps:
       - run:
           name: "Install Python3.6"
-          command: brew upgrade python
-      - run: pip install --upgrade pip
-      - run: pip install cx_Freeze
-      - checkout
+          command: HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade python
+      - run:
+          name: "Upgrade pip"
+          command: pip3 install --upgrade pip
       - run:
           name: "Install Build Dependencies"
-          command: pip3 install -r requirements.txt
+          command: pip3 install wheel cx_Freeze
+      - checkout
+      - run:
+          name: "Update Version"
+          command: python version.py
+      - run:
+          name: "Install Dependencies"
+          command: pip3 install --upgrade -r requirements.txt
       - run:
           name: "Build CLI"
           command: python3 build.py bdist_mac
