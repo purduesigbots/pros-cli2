@@ -6,7 +6,7 @@ jobs:
     steps:
       - run:
           name: "Install Python3.6"
-          command: brew install python3
+          command: brew upgrade python
       - run:
           name: "Install Build Dependencies"
           command: pip3 install -r requirements.txt
