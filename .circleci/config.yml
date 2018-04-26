@@ -30,11 +30,11 @@ jobs:
           path: proscli.tar.gz
       - run:
           name: "Set Up Workspace"
-          command: mkdir -p /tmp/build
+          command: mkdir -p /tmp/build && cp proscli.tar.gz /tmp/build && cp version /tmp/build
       - persist_to_workspace:
           root: /tmp/build
           paths:
-            - build/PROS\ CLI.app
+            - proscli.tar.gz
             - version
   build_installer:
     macos:
