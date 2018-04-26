@@ -42,27 +42,37 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/build
-      - run: mkdir -p pkg/ROOT
-      - run: mkdir -p pkg/scripts
-      - run: |
-          cat << EOF > pkg/scripts/preinstall
-          #!/bin/sh
-          if [ ! -d /usr/local/bin ]; then
-            mkdir -p /usr/local/bin
-          fi
-          # silently uninstall previous version
-          if [ -e /usr/local/bin/pros ]; then
-            rm -rf /Applications/PROS\ CLI.app
-          fi
-          EOF
-      - run: |
-          cat << EOF > pkg/scripts/postinstall
-          #!/bin/sh
-          # link PROS CLI binary to /usr/local/bin
-          [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
-          ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
-          EOF
-      - run: tar -xvf /tmp/build/proscli.tar.gz -C pkg/ROOT
+      - run:
+          name: "Create pseudo-pkg directory"
+          command: mkdir -p pkg/ROOT pkg/scripts
+      - run:
+          name: "Create preinstall script"
+          command: |
+            cat << EOF > pkg/scripts/preinstall
+            #!/bin/sh
+            if [ ! -d /usr/local/bin ]; then
+              mkdir -p /usr/local/bin
+            fi
+            # silently uninstall previous version
+            if [ -e /usr/local/bin/pros ]; then
+              rm -rf /Applications/PROS\ CLI.app
+            fi
+            EOF
+      - run:
+          name: "Create postinstall script"
+          command: |
+            cat << EOF > pkg/scripts/postinstall
+            #!/bin/sh
+            # link PROS CLI binary to /usr/local/bin
+            [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
+            ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
+            EOF
+      - run:
+          name: "Update scripts permissions"
+          command: chmod +x pkg/scripts/*
+      - run:
+          name: "Unpack .app"
+          command: tar -xvf /tmp/build/proscli.tar.gz -C pkg/ROOT
       - run:
           name: "Build PROS CLI Installer"
           command: pkgbuild --root pkg/ROOT/ --scripts pkg/scripts/ --identifier edu.purdue.cs.pros.pros-cli --version `cat /tmp/build/version` --install-location /Applications pros-cli.pkg
