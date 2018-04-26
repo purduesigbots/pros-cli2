@@ -23,8 +23,14 @@ jobs:
       - run:
           name: "Build CLI"
           command: python3 build.py bdist_mac
+      - run:
+          name: "Compress Output"
+          command: cd build && tar -cvf ../proscli.tar.gz PROS\ CLI.app && cd -
       - store_artifacts:
-          path: build/PROS\ CLI.app
+          path: proscli.tar.gz
+      - run:
+          name: "Set Up Workspace"
+          command: mkdir -p /tmp/build
       - persist_to_workspace:
           root: /tmp/build
           paths:
@@ -36,6 +42,8 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/build
+      - run: mkdir -p pkg/ROOT
+      - run: mkdir -p pkg/scripts
       - run: |
           cat << EOF > pkg/scripts/preinstall
           #!/bin/sh
@@ -54,7 +62,7 @@ jobs:
           [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
           ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
           EOF
-      - run: cp -r /tmp/build/PROS\ CLI.app pkg/ROOT/
+      - run: tar -xvf /tmp/build/proscli.tar.gz -C pkg/ROOT
       - run:
           name: "Build PROS CLI Installer"
           command: pkgbuild --root pkg/ROOT/ --scripts pkg/scripts/ --identifier edu.purdue.cs.pros.pros-cli --version `cat /tmp/build/version` --install-location /Applications pros-cli.pkg
