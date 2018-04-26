@@ -1,7 +1,12 @@
 import sys
 from cx_Freeze import Executable, setup
 import pkgutil
-from pip.req import parse_requirements
+
+try:  # for pip >= 10 -- https://stackoverflow.com/a/49867265/3175586
+    from pip._internal.req import parse_requirements
+except ImportError:  # for pip <= 9.0.3
+    from pip.req import parse_requirements
+
 import requests.certs
 
 import proscli
