@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run:
           name: "Update Version"
-          command: python version.py
+          command: python3 version.py
       - run:
           name: "Install Dependencies"
           command: pip3 install --upgrade -r requirements.txt
