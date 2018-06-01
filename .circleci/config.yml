@@ -1,97 +1,15 @@
 version: 2
 jobs:
-  build_cli:
+  build:
     macos:
       xcode: "9.0"
     steps:
-      - run:
-          name: "Install Python3.6"
-          command: brew upgrade python
-      - run:
-          name: "Upgrade pip"
-          command: pip3 install --upgrade pip
-      - run:
-          name: "Install Build Dependencies"
-          command: pip3 install wheel cx_Freeze
       - checkout
-      - run:
-          name: "Update Version"
-          command: python3 version.py
-      - run:
-          name: "Install Dependencies"
-          command: pip3 install --upgrade -r requirements.txt
-      - run:
-          name: "Build CLI"
-          command: python3 build.py bdist_mac
-      - run:
-          name: "Compress Output"
-          command: cd build && tar -cvf ../proscli.tar.gz PROS\ CLI.app && cd -
+      - run: chmod +x scripts/install_mac_build_dependencies.sh scripts/build_cli_mac.sh scripts/build_pkg_mac.sh
+      - run: scripts/install_mac_build_dependencies.sh
+      - run: scripts/build_cli_mac.sh
       - store_artifacts:
           path: proscli.tar.gz
-      - run:
-          name: "Set Up Workspace"
-          command: mkdir -p /tmp/build && cp proscli.tar.gz /tmp/build && cp version /tmp/build
-      - persist_to_workspace:
-          root: /tmp/build
-          paths:
-            - proscli.tar.gz
-            - version
-  build_installer:
-    macos:
-      xcode: "9.0"
-    steps:
-      - attach_workspace:
-          at: /tmp/build
-      - run:
-          name: "Create pseudo-pkg directory"
-          command: mkdir -p pkg/ROOT pkg/scripts
-      - run:
-          name: "Create preinstall script"
-          command: |
-            cat << EOF > pkg/scripts/preinstall
-            #!/bin/sh
-            if [ ! -d /usr/local/bin ]; then
-              mkdir -p /usr/local/bin
-            fi
-            # silently uninstall previous version
-            if [ -e /usr/local/bin/pros ]; then
-              rm -rf /Applications/PROS\ CLI.app
-            fi
-            EOF
-      - run:
-          name: "Create postinstall script"
-          command: |
-            cat << EOF > pkg/scripts/postinstall
-            #!/bin/sh
-            # link PROS CLI binary to /usr/local/bin
-            [ -d /usr/local/bin ] || mkdir -p /usr/local/bin
-            ln -s /Applications/PROS\ CLI.app/Contents/MacOS/pros /usr/local/bin/pros
-            EOF
-      - run:
-          name: "Update scripts permissions"
-          command: chmod +x pkg/scripts/*
-      - run:
-          name: "Unpack .app"
-          command: tar -xvf /tmp/build/proscli.tar.gz -C pkg/ROOT
-      - run:
-          name: "Build PROS CLI Installer"
-          command: pkgbuild --root pkg/ROOT/ --scripts pkg/scripts/ --identifier edu.purdue.cs.pros.pros-cli --version `cat /tmp/build/version` --install-location /Applications pros-cli.pkg
+      - run: scripts/build_pkg_mac.sh
       - store_artifacts:
           path: pros-cli.pkg
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build_cli:
-          filters:
-            branches:
-                only:
-                  - master
-      - build_installer:
-          filters:
-            branches:
-              only:
-                - master
-          requires:
-            - build_cli
-        
