@@ -29,8 +29,7 @@ build_exe_options = {
 
 build_mac_options = {
     'bundle_name': 'PROS CLI',
-    'iconfile': 'pros.icns',
-    "include_files": [(requests.certs.where(), 'cacert.pem')]
+    'iconfile': 'pros.icns'
 }
 
 modules = []
