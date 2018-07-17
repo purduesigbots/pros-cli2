@@ -2,7 +2,7 @@
 
 echo =============== INSTALLING PYTHON3 ===============
 
-brew upgrade pyenv
+brew install pyenv
 
 if [ $? -ne 0 ]
 then
