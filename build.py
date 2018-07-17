@@ -30,7 +30,6 @@ build_exe_options = {
 build_mac_options = {
     'bundle_name': 'PROS CLI',
     'iconfile': 'pros.icns',
-    'packages': ['ssl', 'prosconductor.providers.githubreleases', 'requests', 'idna'],
     "include_files": [(requests.certs.where(), 'cacert.pem')]
 }
 
