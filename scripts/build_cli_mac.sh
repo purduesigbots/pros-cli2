@@ -1,13 +1,13 @@
 #!/bin/bash
 
 echo =============== UPDATING VERSION ===============
-python3 version.py
+python version.py
 
 echo =============== INSTALL DEPENDENCIES ===============
-pip3 install --upgrade -r requirements.txt
+pip install --upgrade -r requirements.txt
 
 echo =============== BUILD CLI ===============
-python3 build.py bdist_mac
+python build.py bdist_mac
 
 echo =============== COMPRESS ARTIFACTS ===============
 cd build
