@@ -21,7 +21,7 @@ def get_cert_attr():
     if getattr(sys, 'frozen', False):
         return os.path.join(os.path.dirname(sys.executable), 'cacert.pem')
     else:
-        return True
+        return requests.certs.where()
 
 
 class GithubReleasesDepotProvider(DepotProvider):
