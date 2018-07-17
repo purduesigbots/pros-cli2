@@ -11,8 +11,9 @@ then
 fi
 
 pyenv install 3.6.5
+pyenv global 3.6.5
 
 echo =============== INSTALLING PIP DEPENDENCIES ===============
 
-pip3 install --upgrade pip
-pip3 install wheel cx_Freeze
+pip install --upgrade pip
+pip install wheel cx_Freeze
