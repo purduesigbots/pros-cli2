@@ -11,5 +11,5 @@ python3 build.py bdist_mac
 
 echo =============== COMPRESS ARTIFACTS ===============
 cd build
-tar -cvf ../proscli.tar.gz PROS\ CLI.app
+ditto -c -k --sequesterRsrc --keepParent PROS\ CLI.app pros-cli.zip
 cd -
