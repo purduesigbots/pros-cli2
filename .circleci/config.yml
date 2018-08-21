@@ -9,7 +9,4 @@ jobs:
       - run: scripts/install_mac_build_dependencies.sh
       - run: scripts/build_cli_mac.sh
       - store_artifacts:
-          path: proscli.tar.gz
-      - run: scripts/build_pkg_mac.sh
-      - store_artifacts:
-          path: pros-cli.pkg
+          path: build/pros-cli.zip
