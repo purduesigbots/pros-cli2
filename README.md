@@ -1,3 +1,6 @@
+## This project has been archived.
+Development is currently being done purduesigbots/pros-cli (PROS CLI 3). This repository is now maintained as an archive and no further development will be done.
+
 # PROS CLI
 
 PROS is the only open source development environment for the VEX EDR Platform.
